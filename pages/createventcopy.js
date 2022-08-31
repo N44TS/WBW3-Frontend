@@ -10,14 +10,7 @@ import getRandomImage from "../utils/getRandomImage";
 
 import Image from 'next/image'
 import Spinner from "../components/spinner.gif";
-
-import { Web3Storage, File } from "web3.storage";
-
-function makeStorageClient() {
-  return new Web3Storage({
-    token: process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN,
-  });
-}
+import { getNullableType } from "graphql";
 
 export default function CreateEvent() {
   const { data: account } = useAccount();
@@ -39,6 +32,22 @@ export default function CreateEvent() {
   const [apiFetch, setApiFetch] = useState(null);
   const [trulyMinted, settrulyMinted] = useState(null);
 
+  // const [fileUrl, updateFileUrl] = useState(``);
+
+  // const client = create('https://ipfs.infura.io:5001/api/v0')
+
+  // async function onImageChange(e) {
+  //   const file = e.target.files[0]
+  //   try {
+  //     const added = await client.add(file)
+  //     const url = `https://ipfs.infura.io/ipfs/${added.path}`
+  //     updateFileUrl(url)
+  //     console.log("something with ifps is done here")
+  //   } catch (error) {
+  //     console.log('Error uploading file: ', error)
+  //   }  
+  // }
+
   async function handleSubmit(e) {
     e.preventDefault();
     console.log("LFG make an event woop!")
@@ -48,18 +57,27 @@ export default function CreateEvent() {
       name: eventName,
       description: eventDescription,
       link: eventLink,
-      image: "/" + eventImage.name,
+      image: getRandomImage(),
+      //image: eventImage.name
     };
 
     try {
-      const buffer = Buffer.from(JSON.stringify(body));
-      const files = [new File([buffer], "data.json"), eventImage];
-      const client = makeStorageClient();
-      const cid = await client.put(files);
-      await createEvent(cid);
+      const response = await fetch("/api/store-event-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (response.status !== 200) {
+        alert("Oops! Something went wrong. Please refresh and try again.");
+      } else {
+        console.log("Form successfully submitted!");
+        let responseJSON = await response.json();
+        await createEvent(responseJSON.cid);
         console.log("API has finally returned");
         setTimeout(() => console.log('Initial 15 second timeout!'), 15000);
         setTimeout(() =>  settrulyMinted(true), 16000);
+      }
       // check response, if success is false, dont take them to success page
     } catch (error) {
       alert(
@@ -67,7 +85,6 @@ export default function CreateEvent() {
       );
     }
   }
-  
 
   const createEvent = async (cid) => {
     try {
@@ -92,11 +109,11 @@ export default function CreateEvent() {
         console.log("Minting...", txn.hash);
         let wait = await txn.wait();
         console.log("Minted -- ", txn.hash);
-
         setEventID(wait.events[0].args[0]);
+        setMessage("Your event has been created successfully.");
+        setLoading(false)
         setSuccess(true);
-        setLoading(false);
-        setMessage("Your event has almost been created successfully.");
+        
       } else {
         console.log("Error getting contract.");
       }
@@ -118,10 +135,11 @@ export default function CreateEvent() {
     });
   });
 
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <Head>
-        <title>Create your event | Sports4Women</title>
+        <title>Create your event | Sports4Women </title>
         <meta
           name="description"
           content="Create your virtual event on the blockchain"
@@ -131,7 +149,7 @@ export default function CreateEvent() {
         {loading && (
           <Alert
             alertType={"loading"}
-            alertBody={"Please wait"}
+            alertBody={"Please wait, minting your event"}
             triggerAlert={true}
             color={"white"}
           />
@@ -172,7 +190,7 @@ export default function CreateEvent() {
         {!success && (
           <h1 className="text-3xl tracking-tight font-extrabold text-gray-900 sm:text-4xl md:text-5xl mb-4">
             Create your event
-          </h1>
+          </h1>     
         )}
         {account && !success && (
           <form
@@ -310,24 +328,15 @@ export default function CreateEvent() {
                 </div>
               </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                >
-                  Event image
-                  <p className="mt-1 max-w-2xl text-sm text-gray-400">
-                    Add an image for your event
-                  </p>
-                </label>
-                <div className="mt-1 sm:mt-0 sm:col-span-2">
+              {/* <div>
+                <p>Image here</p>
                 <input
                   type="file" accept="image/*"
                   id="event-image"
                   name="event-image"
                   onChange={(e) => setEventImage(e.target.files[0])}
                 />
-              </div>
-              </div>
+              </div> */}
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
                 <label
@@ -362,7 +371,7 @@ export default function CreateEvent() {
           {apiFetch ? (
           <p className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >Please wait for wallet pop</p>
-                  ) :
+        ) :
                 <button
                   type="submit"
                   className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -375,9 +384,9 @@ export default function CreateEvent() {
             </div>
           </form>
         )}
-         {success && eventID && !trulyMinted && (
+        {success && eventID && !trulyMinted && (
           <div>
-            <p>Just a litttttle bit longer, this isnt efficicent is it really, needs tidying up but I just havent had the time to work on this as much as I would have liked too.</p>
+            <p>Just a litttttle bit longer, this isnt efficicent is it really, needs tidying up</p>
             <Image src={Spinner} alt="loading spinner" height={200} width={200} />
           </div>
         )}

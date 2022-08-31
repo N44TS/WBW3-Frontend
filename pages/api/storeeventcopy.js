@@ -1,7 +1,9 @@
 import { Web3Storage, File, getFilesFromPath } from "web3.storage";
 const { resolve } = require("path");
+import Image from "next/image";
 
 export default async function handler(req, res) {
+  
     if (req.method === "POST") {
       return await storeEventData(req, res);
     } else {
@@ -14,8 +16,12 @@ export default async function handler(req, res) {
   async function storeEventData(req, res) {
     const body = req.body;
     try {
-      const files = await makeFileObjects(body); //create a json file that includes metadata passed from the req.body object
-      const cid = await storeFiles(files); //store that json file to Web3.storage.
+      console.log("about to makefileobjects")
+      const files = await makeFileObjects(body);
+       //create a json file that includes metadata passed from the req.body object
+       console.log("about to storethefiles")
+      const cid = await storeFiles(files); 
+      //store that json file to Web3.storage.
       return res.status(200).json({ success: true, cid: cid });
     } catch (err) {
       return res
@@ -23,6 +29,16 @@ export default async function handler(req, res) {
         .json({ error: "Error creating event", success: false });
     }
   }
+
+  // async function makeFileObjects(body) {
+  //   const buffer = Buffer.from(JSON.stringify(body));
+  
+  //   const files = [
+  //     new File([buffer], "data.json")];
+    
+  //   console.log("File objects made", files)
+  //   return files;
+  // }
 
   async function makeFileObjects(body) {
     const buffer = Buffer.from(JSON.stringify(body));
@@ -33,15 +49,26 @@ export default async function handler(req, res) {
     files.push(new File([buffer], "data.json")); //create a new File from the buffer which we can name "data.json", and then push this to the files array
     return files;
   }
- 
+
+  // async function makeFileObjects(body) {
+  //   const buffer = Buffer.from(JSON.stringify(body));
+  
+  //   const files = await getFilesFromPath(body.image)
+  
+  //   files.push(new File([buffer], "data.json")); 
+  // //create a new File from the buffer which we can name "data.json", and then push this to the files array
+  //   return files;
+  // }
+
   //need to create a Web3Storage client object to interact with.
   function makeStorageClient() {
     return new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN });
   }
 
   // Once we have created our Web3Storage client, we can call put method on the client to upload our array of files.
-  async function storeFiles(files) {
+    async function storeFiles(files) {
     const client = makeStorageClient();
     const cid = await client.put(files);
+    console.log("CID being returned", cid)
     return cid;
   }

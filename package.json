@@ -16,11 +16,13 @@
     "@rainbow-me/rainbowkit": "^0.2.2",
     "ethers": "^5.6.6",
     "graphql": "^16.5.0",
+    "ipfs-http-client": "^57.0.3",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-select": "^5.4.0",
     "wagmi": "^0.4.5",
-    "web3.storage": "^4.2.0"
+    "web3.storage": "^4.4.0"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.0",
