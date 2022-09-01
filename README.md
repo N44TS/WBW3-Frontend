@@ -1,5 +1,16 @@
 # Web3RSVP-frontend
 
+This project is for the #30daysofWeb3 challenge by WBW3.
+It is a dapp that uses blockchain to allow people to get a refund after rsvp'ing and attending an event. 
+
+## Customisations
+
+<ul>
+<li>Allow user to upload their own image</li>
+<li>Search funtion, querying the graph to search for event name</li>
+<li>[in progress] Making events payable with a percentage of the fee being refunded after confirmed attendance</li>
+  </ul>
+
 ### Fork and clone the repo from Github to work with it locally
 
 1. Click the "Fork" button
