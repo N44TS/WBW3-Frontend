@@ -11,6 +11,8 @@
 <li>[in progress] Making events payable with a percentage of the fee being refunded after confirmed attendance</li>
   </ul>
   
+ ![My Remote Image](https://i.imgur.com/ukZ5mNQ.png)
+ 
 ### Check out the connected repos for this project backend here
 <ul>
 <li>Contracts: https://github.com/N44TS/WBW3-Events-Dapp</li>
@@ -19,6 +21,7 @@
 
 #### and the extra Lens part of the curriculum completed here https://github.com/N44TS/Lens-api-dapp / https://lens-api-dapp.vercel.app/
 
+----------------------------------------------------
 ### Fork and clone the repo from Github to work with it locally
 
 1. Click the "Fork" button
