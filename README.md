@@ -1,15 +1,23 @@
 # Web3RSVP-frontend
 
-This project is for the #30daysofWeb3 challenge by WBW3.
-It is a dapp that uses blockchain to allow people to get a refund after rsvp'ing and attending an event. 
+#### This project is for the #30daysofWeb3 challenge by WBW3.
+#### It is a dapp that uses blockchain to allow people to get a refund after rsvp'ing and attending an event. 
 
-## Customisations
+### Customisations added
 
 <ul>
 <li>Allow user to upload their own image</li>
 <li>Search funtion, querying the graph to search for event name</li>
 <li>[in progress] Making events payable with a percentage of the fee being refunded after confirmed attendance</li>
   </ul>
+  
+### Check out the connected repos for this project backend here
+<ul>
+<li>Contracts: https://github.com/N44TS/WBW3-Events-Dapp</li>
+<li>The Graph: https://github.com/N44TS/WBW3-Graph-Tutorial</li>
+</ul>
+
+#### and the extra Lens part of the curriculum completed here https://github.com/N44TS/Lens-api-dapp / https://lens-api-dapp.vercel.app/
 
 ### Fork and clone the repo from Github to work with it locally
 
